@@ -1,0 +1,433 @@
+<template>
+  <view class="wrap">
+    <view class="canvas">
+      <canvas style="width:{{ canvasWidth }}px;height:{{ canvasHeight }}px;" canvas-id="canvas"></canvas>
+    </view>
+    <scroll-view scroll-x scroll-left="{{ scrollLeft }}">
+      <view class="input">{{ inputText }}</view>
+    </scroll-view>
+    <view class="grid">
+      <view class="col1">
+        <view class="row1">
+          <view>
+            <button class="blue" bindtap="toggle">☪</button>
+          </view>
+          <view>
+            <button class="dark" bindtap="input" data-val="(">(</button>
+          </view>
+          <view>
+            <button class="dark" bindtap="input" data-val=")">)</button>
+          </view>
+        </view>
+        <view class="row2" wx:if="{{ !advance }}">
+          <view><button bindtap="input" data-val="7">7</button></view>
+          <view><button bindtap="input" data-val="8">8</button></view>
+          <view><button bindtap="input" data-val="9">9</button></view>
+          <view><button bindtap="input" data-val="4">4</button></view>
+          <view><button bindtap="input" data-val="5">5</button></view>
+          <view><button bindtap="input" data-val="6">6</button></view>
+          <view><button bindtap="input" data-val="1">1</button></view>
+          <view><button bindtap="input" data-val="2">2</button></view>
+          <view><button bindtap="input" data-val="3">3</button></view>
+          <view class="twice"><button bindtap="input" data-val="0">0</button></view>
+          <view><button bindtap="input" data-val=".">.</button></view>
+        </view>
+        <view class="row2" wx:else>
+          <view><button bindtap="input" data-val="Math.log2">㏒₂</button></view>
+          <view><button bindtap="input" data-val="Math.log">㏑</button></view>
+          <view><button bindtap="input" data-val="Math.log10">㏒₁₀</button></view>
+          <view bindtouchstart="touchStart" bindtouchmove="touchMove" data-no="0" 
+          data-x="{{ buttons[0].x }}" data-y="{{ buttons[0].y }}" class="two">
+            <button class="{{ buttons[0].z ? '' : 'toggle' }}" bindtap="input" data-val="Math.sqrt">√</button>
+            <button class="{{ buttons[0].z ? 'toggle' : '' }}" bindtap="input" data-val="Math.cbrt">∛</button>
+          </view>
+          <view><button bindtap="input" data-val="τ">τ</button></view>
+          <view><button bindtap="input" data-val="ο">ο</button></view>
+          <view bindtouchstart="touchStart" bindtouchmove="touchMove" data-no="1" 
+          data-x="{{ buttons[1].x }}" data-y="{{ buttons[1].y }}" class="two">
+            <button class="{{ buttons[1].z ? '' : 'toggle' }}" bindtap="input" data-val="Math.asin">sin⁻¹</button>
+            <button class="{{ buttons[1].z ? 'toggle' : '' }}" bindtap="input" data-val="Math.sin">sin</button>
+          </view>
+          <view bindtouchstart="touchStart" bindtouchmove="touchMove" data-no="2" 
+          data-x="{{ buttons[2].x }}" data-y="{{ buttons[2].y }}" class="two">
+            <button class="{{ buttons[2].z ? '' : 'toggle' }}" bindtap="input" data-val="Math.acos">cos⁻¹</button>
+            <button class="{{ buttons[2].z ? 'toggle' : '' }}"  bindtap="input" data-val="Math.cos">cos</button>
+          </view>
+          <view bindtouchstart="touchStart" bindtouchmove="touchMove" data-no="3" 
+          data-x="{{ buttons[3].x }}" data-y="{{ buttons[3].y }}" class="two">
+            <button class="{{ buttons[3].z ? '' : 'toggle' }}" bindtap="input" data-val="Math.atan">tan⁻¹</button>
+            <button class="{{ buttons[3].z ? 'toggle' : '' }}" bindtap="input" data-val="Math.tan">tan</button>
+          </view>
+          <view bindtouchstart="touchStart" bindtouchmove="touchMove" data-no="4" 
+          data-x="{{ buttons[4].x }}" data-y="{{ buttons[4].y }}" class="two">
+            <button class="{{ buttons[4].z ? '' : 'toggle' }}" bindtap="input" data-val="Math.asinh">sinh⁻¹</button>
+            <button class="{{ buttons[4].z ? 'toggle' : '' }}" bindtap="input" data-val="Math.sinh">sinh</button>
+          </view>
+          <view bindtouchstart="touchStart" bindtouchmove="touchMove" data-no="5" 
+          data-x="{{ buttons[5].x }}" data-y="{{ buttons[5].y }}" class="two">
+            <button class="{{ buttons[5].z ? '' : 'toggle' }}" bindtap="input" data-val="Math.acosh">cosh⁻¹</button>
+            <button class="{{ buttons[5].z ? 'toggle' : '' }}" bindtap="input" data-val="Math.cosh">cosh</button>
+          </view>
+          <view bindtouchstart="touchStart" bindtouchmove="touchMove" data-no="6" 
+          data-x="{{ buttons[6].x }}" data-y="{{ buttons[6].y }}" class="two">
+            <button class="{{ buttons[6].z ? '' : 'toggle' }}" bindtap="input" data-val="Math.atanh">tanh⁻¹</button>
+            <button class="{{ buttons[6].z ? 'toggle' : '' }}" bindtap="input" data-val="Math.tanh">tanh</button>
+          </view>
+        </view>
+      </view>
+      <view class="col2">
+        <view class="row1">
+          <view class="twice">
+            <button class="dark" bindtap="del" data-val="←">←</button>
+          </view>
+        </view>
+        <view class="row2">
+          <view bindtouchstart="touchStart" bindtouchmove="touchMove" data-no="7" 
+          data-x="{{ buttons[7].x }}" data-y="{{ buttons[7].y }}" class="two">
+            <button class="{{ buttons[7].z ? '' : 'toggle orange' }}" bindtap="input" data-val="%">%</button>
+            <button class="{{ buttons[7].z ? 'toggle orange' : '' }}" bindtap="input" data-val="/">÷</button>
+          </view>
+          <view><button class="dark" bindtap="input" data-val="X">x</button></view>
+          <view bindtouchstart="touchStart" bindtouchmove="touchMove" data-no="8" 
+          data-x="{{ buttons[8].x }}" data-y="{{ buttons[8].y }}" class="two">
+            <button class="{{ buttons[8].z ? '' : 'toggle orange' }}" bindtap="input" data-val="Math.pow">xʸ</button>
+            <button class="{{ buttons[8].z ? 'toggle orange' : '' }}" bindtap="input" data-val="*">╳</button>
+          </view>
+          <view bindtouchstart="touchStart" bindtouchmove="touchMove" data-no="9" 
+          data-x="{{ buttons[9].x }}" data-y="{{ buttons[9].y }}" class="two pie">
+            <button class="{{ buttons[9].z ? '' : 'toggle dark' }}" bindtap="input" data-val="Math.E">e</button>
+            <button class="{{ buttons[9].z ? 'toggle dark' : '' }}" bindtap="input" data-val="Math.PI">π</button>
+          </view>
+          <view bindtouchstart="touchStart" bindtouchmove="touchMove" data-no="10" 
+          data-x="{{ buttons[10].x }}" data-y="{{ buttons[10].y }}" class="two">
+            <button class="{{ buttons[10].z ? '' : 'toggle orange' }}" bindtap="input" data-val="Math.exp">eˣ</button>
+            <button class="{{ buttons[10].z ? 'toggle orange' : '' }}" bindtap="input" data-val="-">－</button>
+          </view>
+          <view class="double"><button class="orange" bindtap="drawResult" data-val="=">＝</button></view>
+          <view bindtouchstart="touchStart" bindtouchmove="touchMove" data-no="11" 
+          data-x="{{ buttons[11].x }}" data-y="{{ buttons[11].y }}" class="two">
+            <button class="{{ buttons[11].z ? '' : 'toggle orange' }}" bindtap="input" data-val=",">,</button>
+            <button class="{{ buttons[11].z ? 'toggle orange' : '' }}" bindtap="input" data-val="+">+</button>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import binding from '../../static/utils/binding';
+export default {
+  config: {
+    navigationBarTitleText: '计算器',
+    navigationBarBackgroundColor: '#000000',
+    navigationBarTextStyle: 'white',
+    backgroundColor: '#000000',
+    disableScroll: true,
+  },
+  data: {
+    canvasWidth: 300,
+    canvasHeight: 150,
+    inputText: '0',
+    inputVal: '',
+    isEmpty: true,
+    xNum: 0,
+    advance: false,
+    buttons: [],
+    scrollLeft: 0,
+  },
+  timer: null,
+  canvas: null,
+  onLoad() {
+    try {
+      const arr = [];
+      for (let index = 0; index <= 11; index++) {
+        arr.push({ x: 0, y: 0, z: 0 });
+      }
+      this.setData({ buttons: arr });
+      const sys = wx.getSystemInfoSync();
+      const query = wx.createSelectorQuery();
+      this.canvas = wx.createCanvasContext('canvas');
+      query.select('.canvas').boundingClientRect();
+      query.exec((res) => {
+        this.setData({ canvasWidth: sys.windowWidth - 10, canvasHeight: res[0].height });
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  input(event) {
+    const val = event.currentTarget.dataset.val;
+    const txt = this.data.inputText;
+    const len = txt.length + 1 > 20 ? txt.length - 20 : 0;
+    if (this.data.isEmpty || txt === '0') {
+      this.setData({ inputText: val, isEmpty: false });
+    } else {
+      this.setData({ inputText: txt + '' + val, scrollLeft: len * 16 });
+    }
+    if (val === 'X') {
+      this.setData({ xNum: this.data.xNum + 1 });
+    }
+  },
+  drawResult() {
+    this.canvas.fillStyle = '#fff';
+    this.canvas.strokeStyle = '#fff';
+    if (this.data.xNum > 0) {
+      // todo
+      this.drawGrid();
+    } else {
+      this.canvas.setFontSize(30);
+      this.canvas.setTextAlign('right');
+      this.canvas.setTextBaseline('bottom');
+      this.canvas.fillText(binding.eval(this.data.inputText), this.data.canvasWidth, this.data.canvasHeight);
+    }
+    this.canvas.draw();
+  },
+  drawGrid() {
+    const fontSize = 10;
+    const ox = Math.floor(this.data.canvasWidth / 2);
+    const oy = Math.floor(this.data.canvasHeight / 2);
+    //箭头三角形中线长
+    const arrowLin = 4 * Math.cos(Math.PI / 6);
+    //箭头三角形底边/2
+    const arrowDui = 4 * Math.sin(Math.PI / 6);
+    //x轴
+    this.canvas.moveTo(0, oy);
+    this.canvas.lineTo(this.data.canvasWidth, oy);
+    //y轴
+    this.canvas.moveTo(ox, this.data.canvasHeight);
+    this.canvas.lineTo(ox, 0);
+    //x箭头
+    this.canvas.moveTo(this.data.canvasWidth - arrowLin - 1, oy - arrowDui);
+    this.canvas.lineTo(this.data.canvasWidth, oy);
+    this.canvas.lineTo(this.data.canvasWidth - arrowLin - 1, oy + arrowDui);
+    //y箭头
+    this.canvas.moveTo(ox - arrowDui, arrowLin + 1);
+    this.canvas.lineTo(ox, 0);
+    this.canvas.lineTo(ox + arrowDui, arrowLin + 1);
+    this.canvas.stroke();
+    //x轴分割
+    let x = 0;
+    const xCount = 4;
+    const dotLine = 6;
+    const cellXL = this.data.canvasWidth / 2 / xCount - 2;
+    this.canvas.beginPath();
+    this.canvas.setFontSize(fontSize);
+    for (let i = 1; i <= xCount; i++) {
+      //负数轴
+      x = Math.floor(this.data.canvasWidth / 2 - i * cellXL);
+      if (x > 0) {
+        this.canvas.moveTo(x, this.data.canvasHeight / 2 - dotLine);
+        this.canvas.lineTo(x, this.data.canvasHeight / 2);
+        this.canvas.fillText(-i, x - this.canvas.measureText(-i).width / 2,
+          this.data.canvasHeight / 2 + fontSize);
+      }
+
+      //正数轴
+      x = Math.floor(this.data.canvasWidth / 2 + i * cellXL);
+      if (x < this.data.canvasWidth) {
+        this.canvas.moveTo(x, this.data.canvasHeight / 2 - dotLine);
+        this.canvas.lineTo(x, this.data.canvasHeight / 2);
+        this.canvas.fillText(i, x - this.canvas.measureText(i).width / 2,
+          this.data.canvasHeight / 2 + fontSize);
+      }
+    }
+    //y轴分割
+    let y = 0;
+    const yCount = 4;
+    const cellYL = this.data.canvasHeight / 2 / yCount - 2;
+    for (let j = 1; j <= yCount; j++) {
+      //负轴
+      y = Math.floor(this.data.canvasHeight / 2 + j * cellYL);
+      if (y < this.data.canvasHeight) {
+        this.canvas.moveTo(Math.floor(this.data.canvasWidth / 2 + dotLine), y);
+        this.canvas.lineTo(this.data.canvasWidth / 2, y);
+        this.canvas.fillText(-j, this.data.canvasWidth / 2 + fontSize, y + fontSize / 2);
+      }
+
+      //正轴
+      y = Math.floor(this.data.canvasHeight / 2 - j * cellYL);
+      if (y > 0) {
+        this.canvas.moveTo(Math.floor(this.data.canvasWidth / 2 + dotLine), y);
+        this.canvas.lineTo(this.data.canvasWidth / 2, y);
+        this.canvas.fillText(j, this.data.canvasWidth / 2 + fontSize, y + fontSize / 2);
+      }
+    }
+    this.canvas.stroke();
+    const fw = this.canvas.measureText('x').width;
+    this.canvas.fillText('x', this.data.canvasWidth - fw, this.data.canvasHeight / 2 + fontSize);
+    this.canvas.fillText('y', this.data.canvasWidth / 2 + fw, fw);
+    const oneXV = 1 / cellXL;
+    const oneYV = 1 / cellYL;
+    const startXV = -this.data.canvasWidth / 2 * oneXV;//最左方x的值
+    const startYV = this.data.canvasHeight / 2 * oneYV;//最上方y的值
+    let yv = 0;
+    let yy = 0;
+    this.canvas.strokeStyle = '#f00';
+    this.canvas.beginPath();
+    let str = '';
+    for (let x = 0; x <= this.data.canvasWidth; x++) {
+      str = this.data.inputText.replace(/X/g, '(' + startXV + '+' + oneXV + ' * ' + x + ')');
+      yv = binding.eval(str);
+      yy = (startYV - yv) / oneYV;
+      if (Math.abs(x) > this.data.canvasWidth || Math.abs(yy) > this.data.canvasHeight
+        || x <= 0 || x >= this.data.canvasWidth) {
+          this.canvas.moveTo(x, yy);
+          continue;
+      }
+      this.canvas.lineTo(x, yy);
+    }
+    this.canvas.stroke();
+  },
+  del() {
+    let val = this.data.inputText.substr(0, this.data.inputText.length - 1);
+    const len = val.length + 1 > 20 ? val.length - 20 : 0;
+    if (val === '') {
+      val = '0';
+      this.setData({ isEmpty: true });
+    }
+    if (this.data.inputText.substr(- 1) === 'X') {
+      this.setData({ xNum: this.data.xNum - 1 });
+    }
+    this.setData({ inputText: val, scrollLeft: len * 16  });
+  },
+  toggle() {
+    this.setData({ advance: !this.data.advance });
+  },
+  touchStart(event) {
+    const changeX = 'buttons[' + event.currentTarget.dataset.no + '].x';
+    const changeY = 'buttons[' + event.currentTarget.dataset.no + '].y';
+    this.setData({ [changeX]: event.changedTouches[0].clientX, [changeY]: event.changedTouches[0].clientY });
+  },
+  touchMove(event) {
+    const dx = event.changedTouches[0].clientX - event.currentTarget.dataset.x;
+    const dy = event.changedTouches[0].clientY - event.currentTarget.dataset.y;
+    const dz = this.data.buttons[event.currentTarget.dataset.no].z;
+    if (!this.timer) {
+      this.timer = setTimeout(() => {
+        const angle = 180 * Math.atan2(dy, dx) / Math.PI;
+        const changeX = 'buttons[' + event.currentTarget.dataset.no + '].x';
+        const changeY = 'buttons[' + event.currentTarget.dataset.no + '].y';
+        const changeZ = 'buttons[' + event.currentTarget.dataset.no + '].z';
+        this.setData({ [changeX]: 0, [changeY]: 0 });
+        if (Math.abs(angle) > 30) {
+          this.setData({ [changeZ]: !dz });
+        }
+        clearTimeout(this.timer);
+        this.timer = null;
+      }, 200);
+    }
+  },
+}
+</script>
+
+<style lang="less">
+page{
+  height: 100vh;
+  overflow: hidden;
+}
+.content{
+  .mix-flex-center();
+}
+.wrap{
+  padding: 5px;
+  background: #000;
+  min-height: 100%;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+.canvas{
+  flex-grow: 1;
+}
+.input{
+  line-height: 2;
+  font-size: 150%;
+  white-space: nowrap;
+  text-align: right;
+}
+.grid{
+  display: flex;
+  overflow: hidden;
+  padding-bottom: 24rpx;
+}
+.col1, .col2{
+  display: flex;
+  flex-grow: 3;
+  flex-direction: column;
+}
+.col2{
+  flex-grow: 2;
+}
+.row1, .row2{
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  flex-direction: row;
+  width: 100%;
+}
+.col1 .row1>view, .col1 .row2>view,.col2 .row1>view, .col2 .row2>view{
+  width: 33.33%;
+  position: relative;
+  margin-top: 24rpx;
+  height: 96rpx;
+}
+.col2 .row1>view, .col2 .row2>view{
+  width: 50%;
+}
+.grid button{
+  border: none;
+  color: #333;
+  display: block;
+  border-radius: 48rpx;
+  width: 96rpx;
+  line-height: 96rpx;
+  height: 96rpx;
+  background: -webkit-linear-gradient(top, #fff, #f2f2f2);
+  text-align: center;
+  padding: 0;
+  position: absolute;
+  top:0;
+  left: 50%;
+  z-index: 1;
+  margin-left: -48rpx;
+  transition: all 0.5s;
+}
+.grid .two button{
+  background: transparent;
+}
+.grid button.toggle{
+  z-index: 0;
+  background: -webkit-linear-gradient(top, #fff, #f2f2f2);
+  line-height: 48rpx;
+  font-size: 0.5em;
+  color: #333;
+}
+.grid button.blue{
+  background: -webkit-linear-gradient(top, #0069ff, #0029ff);
+}
+.grid button.orange{
+  background: -webkit-linear-gradient(top, #ff9600, #ff6600);
+}
+.grid button.dark{
+  background: -webkit-linear-gradient(top, #333, #222);
+  color: #f2f2f2;
+}
+.grid .pie button{
+  color: #fff;
+}
+.grid .col1 .row2>view.twice{
+  width: 66.66%;
+}
+.grid .col2 .row1>view.twice{
+  width: 100%;
+}
+.grid .col1 .row2>view.twice button,.grid .col2 .row1>view.twice button{
+  width: 240rpx;
+  margin-left: -120rpx;
+}
+.grid .col2 .row2>view.double button{
+  height: 215rpx;
+  line-height: 215rpx;
+}
+</style>
