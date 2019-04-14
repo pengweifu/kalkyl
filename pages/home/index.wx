@@ -152,9 +152,24 @@ export default {
       query.exec((res) => {
         this.setData({ canvasWidth: sys.windowWidth - 10, canvasHeight: res[0].height });
       });
+      wx.startAccelerometer({ interval: 'ui' });
+      wx.onAccelerometerChange( res => {
+        if (res.x > 0.6 && res.y > 0.6) {
+          this.setData({ inputText: '0', scrollLeft: 0, xNum: 0, isEmpty: true });
+          this.canvas.clearRect(0, 0, this.data.canvasWidth, this.data.canvasHeight);
+          this.canvas.draw();
+        }
+      });
     } catch (error) {
       console.error(error);
     }
+  },
+  onUnload() {
+    if (this.timer != null) {
+      clearTimeout(this.timer);
+      this.timer = null;
+    }
+    wx.stopAccelerometer();
   },
   input(event) {
     const val = event.currentTarget.dataset.val;
